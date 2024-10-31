@@ -10,17 +10,19 @@ import org.springframework.web.bind.annotation.RestController
 class HelloController
 @Autowired constructor(val userService: UserService) {
 
+    data class Greeting(val message: String)
+
     @GetMapping("/api/hello/")
-    fun greeting(authentication: Authentication?): Map<String, String> {
+    fun greeting(authentication: Authentication?): Greeting {
 
         val user = userService.getUserByAuthentication(authentication)
 
         var message = "Hello, world!"
         if (user.isPresent) {
             val username = user.get().username
-            message = String.format("Hello, your username is %s.", username)
+            message = "Hello, your username is ${username}."
         }
 
-        return mapOf("message" to message)
+        return Greeting(message)
     }
 }

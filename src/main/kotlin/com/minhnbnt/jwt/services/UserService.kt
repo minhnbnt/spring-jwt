@@ -29,11 +29,9 @@ class UserService
             )
         }
 
-        val hashedPassword = passwordEncoder.encode(dto.password)
-
         val user = User(
             username = dto.username,
-            password = hashedPassword
+            password = passwordEncoder.encode(dto.password)
         )
 
         repository.save(user)
@@ -45,7 +43,7 @@ class UserService
             return Optional.empty()
         }
 
-        val principal = authentication.getPrincipal()
+        val principal = authentication.principal
 
         return if (principal is User) {
             Optional.of(principal)

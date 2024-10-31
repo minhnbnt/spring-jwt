@@ -1,5 +1,6 @@
 package com.minhnbnt.jwt.controllers
 
+import com.minhnbnt.jwt.dtos.tokens.TokenRefreshDto
 import com.minhnbnt.jwt.dtos.UserDto
 import com.minhnbnt.jwt.services.JwtsService
 import com.minhnbnt.jwt.services.UserService
@@ -15,17 +16,21 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user/")
 class UserController
 @Autowired constructor(
+
     val userService: UserService,
     val jwtsService: JwtsService
+
 ) {
 
     @PostMapping("/register/")
-    fun registerUser(@Valid @RequestBody dto: UserDto) {
+    fun registerUser(@Valid @RequestBody dto: UserDto) =
         userService.createUser(dto)
-    }
 
     @PostMapping("/token/")
-    fun obtainToken(@Valid @RequestBody dto: UserDto): Map<String, String> {
-        return jwtsService.tokenObtainPair(dto)
-    }
+    fun obtainToken(@Valid @RequestBody dto: UserDto) =
+        jwtsService.tokenObtainPair(dto)
+
+    @PostMapping("/token/refresh/")
+    fun refreshToken(@Valid @RequestBody dto: TokenRefreshDto) =
+        jwtsService.refreshToken(dto.refresh)
 }
