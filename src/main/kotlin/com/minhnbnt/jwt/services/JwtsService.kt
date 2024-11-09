@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.*
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.Instant
 
 
@@ -23,10 +24,10 @@ class JwtsService
     val algorithm: String,
 
     @Value("\${jwts.access-token-lifetime}")
-    val accessTokenLifetime: Long,
+    val accessTokenLifetime: Duration,
 
     @Value("\${jwts.refresh-token-lifetime}")
-    val refreshTokenLifetime: Long,
+    val refreshTokenLifetime: Duration,
 
     val jwtEncoder: JwtEncoder,
 
@@ -34,15 +35,10 @@ class JwtsService
 
 ) {
 
-    private fun generateToken(auth: Authentication, isRefresh: Boolean): Jwt {
-
-        var lifetime = accessTokenLifetime
-        if (isRefresh) {
-            lifetime = refreshTokenLifetime
-        }
+    private fun generateToken(auth: Authentication, lifeTime: Duration): Jwt {
 
         val issued = Instant.now()
-        val expiration = issued.plusSeconds(lifetime)
+        val expiration = issued.plusSeconds(lifeTime.seconds)
 
         val claimsSet = JwtClaimsSet.builder()
             .subject(auth.name)
@@ -58,28 +54,27 @@ class JwtsService
         return jwtEncoder.encode(parameter)
     }
 
-
     fun tokenObtainPair(dto: UserDto): TokenObtainPairDto {
 
-        val authentication = authenticationManager.authenticate(
+        val auth = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 dto.username, dto.password
             )
         )
 
         return TokenObtainPairDto(
-            access = generateToken(authentication, false).tokenValue,
-            refresh = generateToken(authentication, true).tokenValue
+            access = generateToken(auth, accessTokenLifetime).tokenValue,
+            refresh = generateToken(auth, refreshTokenLifetime).tokenValue
         )
     }
 
     fun refreshToken(refreshToken: String): TokenRefreshResponseDto {
 
-        val authentication = authenticationManager.authenticate(
+        val auth = authenticationManager.authenticate(
             BearerTokenAuthenticationToken(refreshToken)
         )
 
-        val accessToken = generateToken(authentication, false)
+        val accessToken = generateToken(auth, accessTokenLifetime)
         return TokenRefreshResponseDto(accessToken.tokenValue)
     }
 }
