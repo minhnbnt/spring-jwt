@@ -25,8 +25,7 @@ class SecurityConfig
 
     private fun loadByUserName(username: String)
         : UserDetails = userRepository.findByUsername(username)
-        .orElseThrow { UsernameNotFoundException("User not found") }
-
+        ?: throw UsernameNotFoundException("User not found")
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {

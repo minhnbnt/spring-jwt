@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.util.*
 
 
 @Service
@@ -22,6 +21,7 @@ class UserService
 ) {
 
     fun createUser(dto: UserDto) {
+
         if (repository.existsByUsername(dto.username)) {
             throw ResponseStatusException(
                 HttpStatus.CONFLICT,
@@ -37,18 +37,14 @@ class UserService
         repository.save(user)
     }
 
-    fun getUserByAuthentication(authentication: Authentication?): Optional<User> {
+    fun getUserByAuthentication(authentication: Authentication?): User? {
 
-        if (authentication == null) {
-            return Optional.empty()
-        }
-
-        val principal = authentication.principal
+        val principal = authentication?.principal
 
         return if (principal is User) {
-            Optional.of(principal)
+            principal
         } else {
-            Optional.empty()
+            null
         }
     }
 }

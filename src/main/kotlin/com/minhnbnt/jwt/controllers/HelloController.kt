@@ -17,10 +17,10 @@ class HelloController
 
         val user = userService.getUserByAuthentication(authentication)
 
-        var message = "Hello, world!"
-        if (user.isPresent) {
-            val username = user.get().username
-            message = "Hello, your username is ${username}."
+        val message = if (user != null) {
+            "Hello, your username is ${user.username}."
+        } else {
+            "Hello, world!"
         }
 
         return Greeting(message)
