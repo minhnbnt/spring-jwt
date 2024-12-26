@@ -41,3 +41,6 @@ out/
 
 ### Database ###
 db.sqlite3
+
+### Certificates ###
+certs/

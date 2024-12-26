@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm
-import org.springframework.security.oauth2.jwt.*
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.JwtClaimsSet
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthenticationToken
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -19,9 +21,6 @@ import java.time.Instant
 @Service
 class JwtsService
 @Autowired constructor(
-
-    @Value("\${jwts.algorithm}")
-    val algorithm: String,
 
     @Value("\${jwts.access-token-lifetime}")
     val accessTokenLifetime: Duration,
@@ -46,10 +45,7 @@ class JwtsService
             .expiresAt(expiration)
             .build()
 
-        val parameter = JwtEncoderParameters.from(
-            JwsHeader.with(MacAlgorithm.valueOf(algorithm)).build(),
-            claimsSet
-        )
+        val parameter = JwtEncoderParameters.from(claimsSet)
 
         return jwtEncoder.encode(parameter)
     }

@@ -7,8 +7,8 @@ spring:
     name: "jwt"
 
   datasource:
-    driver-class-name: "org.sqlite.JDBC"
     url: "jdbc:sqlite:db.sqlite3"
+    driver-class-name: "org.sqlite.JDBC"
 
   jpa:
     hibernate:
@@ -16,8 +16,12 @@ spring:
 
     open-in-view: false
 
+server:
+  port: "${SERVER_PORT:8080}"
+
 jwts:
-  algorithm: "HS256"
+  public-key: "classpath:certs/jwts/public.pem"
+  private-key: "classpath:certs/jwts/private.pem"
 
   access-token-lifetime: PT30M # 30 minutes
   refresh-token-lifetime: P30D # 30 days

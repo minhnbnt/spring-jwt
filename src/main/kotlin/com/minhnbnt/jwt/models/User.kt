@@ -22,7 +22,7 @@ class User(
     override fun equals(other: Any?) =
         other is User && this.id == other.id
 
-    override fun hashCode() = this.id.hashCode()
+    override fun hashCode() = id.hashCode()
 
     override fun getUsername() = username
     override fun getPassword() = password

@@ -11,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -23,9 +22,9 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfig
 @Autowired constructor(val userRepository: UserRepository) {
 
-    private fun loadByUserName(username: String)
-        : UserDetails = userRepository.findByUsername(username)
-        ?: throw UsernameNotFoundException("User not found")
+    private fun loadByUserName(username: String) =
+        userRepository.findByUsername(username)
+            ?: throw UsernameNotFoundException("User not found")
 
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -82,6 +81,6 @@ class SecurityConfig
         : AuthenticationManager = ProviderManager(providers)
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder =
+    fun passwordEncoder() =
         Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 }
