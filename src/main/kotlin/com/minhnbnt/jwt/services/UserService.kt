@@ -22,7 +22,9 @@ class UserService
 
     fun createUser(dto: UserDto) {
 
-        if (repository.existsByUsername(dto.username)) {
+        val (username, password) = dto
+
+        if (repository.existsByUsername(username)) {
             throw ResponseStatusException(
                 HttpStatus.CONFLICT,
                 "Username already exists. Please try a different one."
@@ -30,21 +32,13 @@ class UserService
         }
 
         val user = User(
-            username = dto.username,
-            password = passwordEncoder.encode(dto.password)
+            username = username,
+            password = passwordEncoder.encode(password)
         )
 
         repository.save(user)
     }
 
-    fun getUserByAuthentication(authentication: Authentication?): User? {
-
-        val principal = authentication?.principal
-
-        return if (principal is User) {
-            principal
-        } else {
-            null
-        }
-    }
+    fun getUserByAuthentication(authentication: Authentication?) =
+        authentication?.principal as? User
 }
