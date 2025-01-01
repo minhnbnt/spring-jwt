@@ -27,12 +27,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("org.springframework.security:spring-security-crypto")
-
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     runtimeOnly("org.xerial:sqlite-jdbc")
     runtimeOnly("org.hibernate.orm:hibernate-community-dialects")
+
+    implementation("org.bouncycastle:bcprov-jdk18on:1.79")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
