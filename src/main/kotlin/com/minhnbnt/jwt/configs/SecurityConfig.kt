@@ -10,6 +10,7 @@ import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
+@EnableWebSecurity
 class SecurityConfig
 @Autowired constructor(val userRepository: UserRepository) {
 
@@ -49,10 +51,9 @@ class SecurityConfig
     fun daoAuthenticationProvider(passwordEncoder: PasswordEncoder)
         : DaoAuthenticationProvider {
 
-        val authProvider = DaoAuthenticationProvider()
+        val authProvider = DaoAuthenticationProvider(passwordEncoder)
 
         authProvider.setUserDetailsService(this::loadByUserName)
-        authProvider.setPasswordEncoder(passwordEncoder)
 
         return authProvider
     }
@@ -65,8 +66,7 @@ class SecurityConfig
 
         authProvider.setJwtAuthenticationConverter { jwt ->
 
-            val username = jwt.subject
-            val user = loadByUserName(username)
+            val user = loadByUserName(jwt.subject)
 
             UsernamePasswordAuthenticationToken(
                 user, jwt, user.authorities
@@ -81,6 +81,6 @@ class SecurityConfig
         : AuthenticationManager = ProviderManager(providers)
 
     @Bean
-    fun passwordEncoder() =
-        Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+    fun passwordEncoder(): PasswordEncoder =
+        Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
 }
