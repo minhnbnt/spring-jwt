@@ -37,7 +37,7 @@ class JwtsService
     private fun generateToken(auth: Authentication, lifeTime: Duration): Jwt {
 
         val issued = Instant.now()
-        val expiration = issued.plusSeconds(lifeTime.seconds)
+        val expiration = issued + lifeTime
 
         val claimsSet = JwtClaimsSet.builder()
             .subject(auth.name)
@@ -45,9 +45,9 @@ class JwtsService
             .expiresAt(expiration)
             .build()
 
-        val parameter = JwtEncoderParameters.from(claimsSet)
+        val parameters = JwtEncoderParameters.from(claimsSet)
 
-        return jwtEncoder.encode(parameter)
+        return jwtEncoder.encode(parameters)
     }
 
     fun tokenObtainPair(dto: UserDto): TokenObtainPairDto {
