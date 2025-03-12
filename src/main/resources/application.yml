@@ -1,6 +1,6 @@
 logging:
   level:
-    org.hibernate.SQL: "DEBUG"
+    org.hibernate.SQL: "TRACE"
 
 spring:
   application:
@@ -21,7 +21,7 @@ spring:
       enabled: ALWAYS
 
 server:
-  port: "${SERVER_PORT:8080}"
+  port: "${PORT:8080}"
 
 jwts:
   public-key: "classpath:certs/jwts/public.pem"
