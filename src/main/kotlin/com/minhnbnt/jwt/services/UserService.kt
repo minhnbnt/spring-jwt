@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
@@ -39,6 +40,14 @@ class UserService
         repository.save(user)
     }
 
-    fun getUserByAuthentication(authentication: Authentication?) =
-        authentication?.principal as? User
+    fun getUserByAuthentication(authentication: Authentication?): User? {
+
+        val principal = authentication?.principal
+
+        return when (principal) {
+            is Jwt -> repository.findByUsername(principal.subject)
+            is User -> principal
+            else -> null
+        }
+    }
 }

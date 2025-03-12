@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -15,8 +14,6 @@ import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
@@ -52,26 +49,7 @@ class SecurityConfig
         : DaoAuthenticationProvider {
 
         val authProvider = DaoAuthenticationProvider(passwordEncoder)
-
         authProvider.setUserDetailsService(this::loadByUserName)
-
-        return authProvider
-    }
-
-    @Bean
-    fun jwtAuthenticationProvider(jwtDecoder: JwtDecoder)
-        : JwtAuthenticationProvider {
-
-        val authProvider = JwtAuthenticationProvider(jwtDecoder)
-
-        authProvider.setJwtAuthenticationConverter { jwt ->
-
-            val user = loadByUserName(jwt.subject)
-
-            UsernamePasswordAuthenticationToken(
-                user, jwt, user.authorities
-            )
-        }
 
         return authProvider
     }

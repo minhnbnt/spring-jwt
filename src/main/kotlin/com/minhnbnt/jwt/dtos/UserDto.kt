@@ -9,5 +9,5 @@ data class UserDto(
     val username: String,
 
     @field:NotEmpty
-    val password: String
+    val password: String,
 )
